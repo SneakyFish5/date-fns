@@ -321,7 +321,7 @@ var unescapedLatinCharacterRegExp = /[a-zA-Z]/
  *
  * @param {String} dateString - the string to parse
  * @param {String} formatString - the string of tokens
- * @param {Date|Number} backupDate - defines values missing from the parsed dateString
+ * @param {Date|Number} [backupDate=new Date()] - defines values missing from the parsed dateString
  * @param {Object} [options] - an object with options.
  * @param {Locale} [options.locale=defaultLocale] - the locale object. See [Locale]{@link https://date-fns.org/docs/Locale}
  * @param {0|1|2|3|4|5|6} [options.weekStartsOn=0] - the index of the first day of the week (0 - Sunday)
@@ -360,15 +360,20 @@ export default function parse(
   dirtyBackupDate,
   dirtyOptions
 ) {
-  if (arguments.length < 3) {
+  if (arguments.length < 3 && dirtyBackupDate !== backupDate) {
     throw new TypeError(
       '3 arguments required, but only ' + arguments.length + ' present'
+    )
+  } else if (arguments.length < 2 && dirtyBackupDate === backupDate) {
+    throw new TypeError(
+      '2 arguments required, but only ' + arguments.length + ' present'
     )
   }
 
   var dateString = String(dirtyDateString)
   var formatString = String(dirtyFormatString)
   var options = dirtyOptions || {}
+  var backupDate = dirtyBackupDate || new Date()
 
   var locale = options.locale || defaultLocale
 
@@ -409,7 +414,7 @@ export default function parse(
 
   if (formatString === '') {
     if (dateString === '') {
-      return toDate(dirtyBackupDate)
+      return toDate(backupDate)
     } else {
       return new Date(NaN)
     }
@@ -563,7 +568,7 @@ export default function parse(
       return setterArray[0]
     })
 
-  var date = toDate(dirtyBackupDate)
+  var date = toDate(backupDate)
 
   if (isNaN(date)) {
     return new Date(NaN)

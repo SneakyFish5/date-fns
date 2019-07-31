@@ -15,6 +15,11 @@ describe('parse', function() {
     assert.deepEqual(result, new Date(2018, 6 /* Jul */, 2))
   })
 
+  it('uses `new Date()` when backupDate is not passed in', function() {
+    var result = parse('07-30', 'MM-dd')
+    assert.deepEqual(result, new Date(2019, 6, 30))
+  })
+
   it('two single quote characters are transformed into a "real" single quote', function() {
     var result = parse("'5 o'clock'", "''h 'o''clock'''", backupDate)
     assert.deepEqual(result, new Date(1986, 3 /* Apr */, 4, 5))
@@ -2388,12 +2393,10 @@ describe('parse', function() {
     })
   })
 
-  it('throws TypeError exception if passed less than 3 arguments', function() {
+  it('throws TypeError exception if passed less than 2 arguments', function() {
     assert.throws(parse.bind(null), TypeError)
     // $ExpectedMistake
     assert.throws(parse.bind(null, 1), TypeError)
-    // $ExpectedMistake
-    assert.throws(parse.bind(null, 1, 2), TypeError)
   })
 
   describe('edge cases', function() {
